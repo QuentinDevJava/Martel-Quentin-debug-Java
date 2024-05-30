@@ -1,59 +1,60 @@
 package com.hemebiotech.analytics;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
+import java.util.TreeMap;
 
 public class AnalyticsCounter {
+	private ISymptomReader reader;
+	private ISymptomWriter writer;
 
-	public static void main(String args[]) {
-		
-		try {
-		// first get input
-		BufferedReader reader = new BufferedReader (new FileReader("symptoms.txt"));
-		String line = reader.readLine();
-		// list of symptoms
-		ArrayList<String> symptomData = new ArrayList<String>();
-		while (line != null) {
-			symptomData.add(line); // add symptoms in listArrayList symptomData 
-			line = reader.readLine();	// get another symptom
+	public  AnalyticsCounter(ISymptomReader reader, ISymptomWriter writer) {
+		this.reader = reader;
+		this.writer= writer;
+	}
+	
+	public List<String> getSymptoms(){
+		return reader.GetSymptoms();
+	}
+	
+	public Map<String, Integer> countSymptoms(List<String> symptoms) { 
+		Map<String, Integer> countSymptoms = new HashMap<>();
+		for (String symptom :  symptoms) { 
+			if (countSymptoms.containsKey(symptom)) { 
+				countSymptoms.put(symptom, countSymptoms.get(symptom) + 1);
+			} else {
+				countSymptoms.put(symptom, 1);
+			}
 		}
-		reader.close();
-		
-		// map <symptom,number of symptom found in symptomData >
-		Map<String, Integer> symptomAndNumber = new HashMap<>();
-        for (String symptom : symptomData) { // loop for each value in the list
-            if (symptomAndNumber.containsKey(symptom)) { //if the symptom is already added to the collection we increment it by 1 else i add the symptom to the collection
-            	symptomAndNumber.put(symptom, symptomAndNumber.get(symptom) + 1);
-            } else {
-            	symptomAndNumber.put(symptom, 1);
-            }
-        }
-        
-		// next generate output
-		FileWriter writer = new FileWriter ("result.out");
-		
-        for (Map.Entry<String, Integer> entry : symptomAndNumber.entrySet()) { // loop that reads the entire collection
-            writer.write(entry.getKey() + " : " + entry.getValue()+ "\n");
-        }
-		writer.close();
-		
-		}catch  (FileNotFoundException e) {
-		    System.err.println("Fichier introuvable : " + e.getMessage());
-		} catch (IOException e) {
-		    System.err.println("Erreur de lecture du fichier : " + e.getMessage());
-		} catch (Exception e) {
-		    System.err.println("Erreur inattendue : " + e.getMessage());
-		}
+		return countSymptoms;
+	}
+	
+	public Map<String, Integer> sortSymptoms(Map<String, Integer> symptoms) {
+		Map<String, Integer> sortSymptoms = new TreeMap<>(symptoms);
+		Map<String, Integer> sortSymptoms1 = new HashMap<String, Integer>();
+		List<String> keys = new ArrayList<>(symptoms.keySet());
+		Collections.sort(keys);
+		for (String key : keys) {
+			sortSymptoms1.put(key , symptoms.get(key));
+		}	
+		return sortSymptoms; 
+	}
+	
+	public void writeSymptoms(Map<String, Integer> symptoms) { 
+		writer.writeSymptoms(symptoms);
 	}
 }
 
-	
 
-	
+
+
+
+
+
+
+
+
+

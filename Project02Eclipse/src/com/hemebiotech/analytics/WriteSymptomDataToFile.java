@@ -4,23 +4,18 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-
 /**
  * Simple brute force implementation
- *
  */
 public class WriteSymptomDataToFile  implements ISymptomWriter{
-
+	
 	private String filepath;
-
 	/**
-	 * 
 	 * @param filepath a complete or partial path to the output file
 	 */
 	public WriteSymptomDataToFile (String filepath) {
 		this.filepath = filepath;	
 	}
-
 	@Override
 	public void writeSymptoms(Map<String, Integer> symptoms) {
 		try {
